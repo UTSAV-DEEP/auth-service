@@ -1,2 +1,2 @@
-# auth-server
-A general purpose auth server for managing user session for specific App.
+# auth-service
+A general purpose auth service for managing user session for specific App.
