@@ -14,6 +14,8 @@ public class AppDto implements Serializable {
 
     private String name;
 
+    private String displayName;
+
     private String token;
 
     private String description;
