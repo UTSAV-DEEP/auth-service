@@ -62,7 +62,10 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    private User getValidatedUser(long id, String appToken, User user) {
+    private User getValidatedUser(Long id, String appToken, User user) {
+        if(id == null) {
+            throw new HttpErrorException("Invalid request, id cant be null", HttpStatus.BAD_REQUEST);
+        }
         User requestedUser = userRepository.findUserById(id);
         if (user.isAdmin()) {
             if (null == requestedUser) {

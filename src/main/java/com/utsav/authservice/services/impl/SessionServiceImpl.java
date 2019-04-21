@@ -10,11 +10,15 @@ import com.utsav.authservice.repositories.AppRepository;
 import com.utsav.authservice.repositories.UserRepository;
 import com.utsav.authservice.services.CacheService;
 import com.utsav.authservice.services.SessionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@Slf4j
+@Service
 public class SessionServiceImpl implements SessionService {
 
     private final CacheService cacheService;
@@ -39,12 +43,12 @@ public class SessionServiceImpl implements SessionService {
         if (null == user) {
             throw new HttpErrorException("Invalid email or password", HttpStatus.UNAUTHORIZED);
         }
-        String hashedPassword = BCrypt.hashpw(request.getPassword(), Constants.PW_SALT);
-        if (!hashedPassword.equals(user.getHashedPassword())) {
+        if (!BCrypt.checkpw(request.getPassword(), user.getHashedPassword())) {
             throw new HttpErrorException("Invalid email or password", HttpStatus.UNAUTHORIZED);
         }
         String randomUuid = UUID.randomUUID().toString();
         cacheService.set(randomUuid, String.valueOf(user.getId()));
+        LOG.info("Login successful for email: {}", request.getEmail());
         return new LoginRespDto(randomUuid);
     }
 
@@ -58,6 +62,7 @@ public class SessionServiceImpl implements SessionService {
         if (null == cachedTokenValue) {
             throw new HttpErrorException("Invalid Session", HttpStatus.UNAUTHORIZED);
         }
+        LOG.info("Logging out user with auth-token: {}", authToken);
         cacheService.deleteKey(cachedTokenValue);
     }
 
@@ -68,7 +73,9 @@ public class SessionServiceImpl implements SessionService {
             throw new HttpErrorException("Invalid Session", HttpStatus.UNAUTHORIZED);
         }
         long userId = Long.valueOf(idStr);
-        return userRepository.findUserById(userId);
+        User loggedInUser = userRepository.findUserById(userId);
+        LOG.info("Logged in user: {}", loggedInUser.toString());
+        return loggedInUser;
     }
 
 }
