@@ -8,15 +8,13 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Setter
 @ToString
-@Table
-@Entity(name = "users")
+@Entity
+@Table(name = "users")
 public class User extends AbstractEntity {
 
     @Column(unique=true)
@@ -24,6 +22,8 @@ public class User extends AbstractEntity {
 
     private String displayName;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "app_id")
     private App app;
 
     @Column(unique=true)
@@ -35,7 +35,7 @@ public class User extends AbstractEntity {
 
     public static User from(UserDto userDto) {
         User user = Utils.MODEL_MAPPER.map(userDto, User.class);
-        String hashedPassword = BCrypt.hashpw(userDto.getPassword(), Constants.PW_SALT);
+        String hashedPassword = BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt());
         user.setHashedPassword(hashedPassword);
         return user;
     }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/session")
 public class SessionController {
 
-
     private final SessionService sessionService;
 
     public SessionController(SessionService sessionService) {

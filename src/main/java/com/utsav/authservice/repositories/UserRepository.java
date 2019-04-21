@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query(value = "SELECT u FROM User u WHERE u.appToken = :appToken and u.deleted = 0")
+    @Query(value = "SELECT u FROM User u WHERE u.app.token = :appToken and u.deleted = 0")
     List<User> findUserByAppToken(@Param("appToken") String appToken);
 
     @Query(value = "select u from User u where u.id = :id and u.deleted = 0")
@@ -25,7 +25,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT u FROM User u WHERE u.deleted = 0 and u.app.name = :appName")
     List<User> findAllUsersOfApp(String appName);
-
-
 
 }

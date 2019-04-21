@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 @JsonIgnoreProperties
 public class UserDto {
 
-    @NotNull
     private Long id;
 
     private String userName;
