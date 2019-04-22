@@ -2,6 +2,7 @@ package com.utsav.authservice.web;
 
 import com.utsav.authservice.model.dtos.LoginRespDto;
 import com.utsav.authservice.model.dtos.LoginRqDto;
+import com.utsav.authservice.model.dtos.UserDto;
 import com.utsav.authservice.services.SessionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,5 +31,11 @@ public class SessionController {
             , @RequestHeader(value = "auth-token") String authToken) {
         sessionService.logout(authToken, appToken);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping
+    public ResponseEntity<UserDto> getLoggedInUser(@RequestHeader(value = "app-token") String appToken
+            , @RequestHeader(value = "auth-token") String authToken) {
+        return new ResponseEntity<>(sessionService.getLoggedInUser(authToken, appToken), HttpStatus.OK);
     }
 }
