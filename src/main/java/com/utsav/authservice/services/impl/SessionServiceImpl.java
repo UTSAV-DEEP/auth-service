@@ -2,8 +2,10 @@ package com.utsav.authservice.services.impl;
 
 import com.utsav.authservice.common.Constants;
 import com.utsav.authservice.exceptions.HttpErrorException;
+import com.utsav.authservice.model.dtos.AppDto;
 import com.utsav.authservice.model.dtos.LoginRespDto;
 import com.utsav.authservice.model.dtos.LoginRqDto;
+import com.utsav.authservice.model.dtos.UserDto;
 import com.utsav.authservice.model.entities.App;
 import com.utsav.authservice.model.entities.User;
 import com.utsav.authservice.repositories.AppRepository;
@@ -76,6 +78,22 @@ public class SessionServiceImpl implements SessionService {
         User loggedInUser = userRepository.findUserById(userId);
         LOG.info("Logged in user: {}", loggedInUser.toString());
         return loggedInUser;
+    }
+
+
+    @Override
+    public UserDto getLoggedInUser(String authToken, String appToken) {
+        App app = appRepository.findAppByAppToken(appToken);
+        User requestedUser =getLoggedInUser(authToken);
+        if (null == app) {
+            throw new HttpErrorException(String.format("Invalid appToken: %s", appToken), HttpStatus.FORBIDDEN);
+        }
+        if (app.getId() != requestedUser.getApp().getId()) {
+            throw new HttpErrorException(String.format("User with do not belong to the app with token: %s", appToken), HttpStatus.NOT_FOUND);
+        }
+        UserDto userDto = UserDto.from(requestedUser);
+        userDto.setAppDto(AppDto.from(app));
+        return userDto;
     }
 
 }

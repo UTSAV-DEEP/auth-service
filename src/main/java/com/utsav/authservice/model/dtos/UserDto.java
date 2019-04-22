@@ -5,8 +5,6 @@ import com.utsav.authservice.common.Utils;
 import com.utsav.authservice.model.entities.User;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-
 @Data
 @JsonIgnoreProperties
 public class UserDto {
